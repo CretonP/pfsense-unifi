@@ -6,7 +6,7 @@ import logging.handlers
 from daemon import Daemon
 
 import time
-import unifi.unifi_usg
+# import unifi.unifi_usg
 import unifi.unifi_usg_pro
 import unifi.unifi_ap_lite
 import unifi.utils
