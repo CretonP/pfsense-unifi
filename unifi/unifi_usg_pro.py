@@ -1,5 +1,5 @@
 # coding: utf-8
-from basedevice.py import BaseDevice
+from unifi.basedevice import BaseDevice
 import basecommand 
 import json
 import re
