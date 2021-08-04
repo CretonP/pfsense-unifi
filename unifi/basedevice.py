@@ -1,6 +1,6 @@
 # coding: utf-8
 import os.path
-import ConfigParser
+import configparser
 import logging
 from utils import UnifiTLV
 from utils import mac_string_2_array, ip_string_2_array,getuptime,get_ipv4addr,get_macaddr,_byteify
