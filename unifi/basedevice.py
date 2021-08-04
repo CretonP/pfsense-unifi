@@ -2,9 +2,9 @@
 import os.path
 import configparser
 import logging
-from utils import UnifiTLV
-from utils import mac_string_2_array, ip_string_2_array,getuptime,get_ipv4addr,get_macaddr,_byteify
-from pfsense_utils import pfsense_const, get_temp
+from unifi.utils import UnifiTLV
+from unifi.utils import mac_string_2_array, ip_string_2_array,getuptime,get_ipv4addr,get_macaddr,_byteify
+from unifi.pfsense_utils import pfsense_const, get_temp
 from struct import pack, unpack
 import socket 
 import binascii
