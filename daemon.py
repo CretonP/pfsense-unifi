@@ -122,7 +122,7 @@ class Daemon:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
             else:
-                print str(err)
+                print(err)
                 sys.exit(1)
 
     def restart(self):
