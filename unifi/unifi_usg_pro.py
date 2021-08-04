@@ -1,5 +1,5 @@
 # coding: utf-8
-from basedevice import BaseDevice
+from basedevice.py import BaseDevice
 import basecommand 
 import json
 import re
@@ -178,7 +178,7 @@ class UnifiUSGPro(BaseDevice):
     def append_if_table(self,data,if_stats,io_counters,if_addrs,dpingerStatuses,hostsstatus):
         data['if_table']=[]
         for interface in self.mapConfig["ports"]:
-            if interface["enabled"] and interface["pfsense"] is not "" :
+            if interface["enabled"] and interface["pfsense"] != "" :
                 data['if_table'].append(self.create_if_element(interface,if_stats,io_counters,if_addrs,dpingerStatuses,hostsstatus))
             else:
                 data['if_table'].append({
@@ -282,7 +282,7 @@ class UnifiUSGPro(BaseDevice):
     def append_network_table(self,data,if_stats,io_counters,if_addrs,dpingerStatuses,hostsstatus):
          data['network_table']=[]
          for interface in self.mapConfig["ports"]:
-              if interface["enabled"] and interface["pfsense"] is not "" :
+              if interface["enabled"] and interface["pfsense"] != "" :
                   data['network_table'].append(self.create_network_table_element(interface,if_stats,io_counters,if_addrs,dpingerStatuses,hostsstatus))
         
     def append_port_table(self,data,if_stats,io_counters,if_addrs):
