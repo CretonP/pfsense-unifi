@@ -25,7 +25,7 @@ class PfsenseConfig(object):
         self.interfaces=[]
         ifs = self.root.find("./interfaces")
         if ifs is not None:
-            for child in ifs._children:
+            for child in ifs.getchildren():
                 self.interfaces.append({
                     child.tag:{
                         "if":child.find("if").text,
