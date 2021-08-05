@@ -30,7 +30,7 @@ class BaseDevice:
         self.pfsenseConfig = pfsense_config.PfsenseConfig(pfsense_const['cf_conf_path']+'/config.xml')
 
         #if (not os.path.exists(configfile)):
-            self.createEmptyConfig()
+        self.createEmptyConfig()
         if (not os.path.exists(self.mapfile)):
             self.createEmptyMap()
         self.reload_config()
