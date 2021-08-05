@@ -29,7 +29,7 @@ class BaseDevice:
         #pfsense_const['cf_conf_path']='conf'
         self.pfsenseConfig = pfsense_config.PfsenseConfig(pfsense_const['cf_conf_path']+'/config.xml')
 
-        if (not os.path.exists(configfile)):
+        #if (not os.path.exists(configfile)):
             self.createEmptyConfig()
         if (not os.path.exists(self.mapfile)):
             self.createEmptyMap()
@@ -37,7 +37,7 @@ class BaseDevice:
         self.reload_map()
 
         self.lastError = "None"
-        self.firmware = self.config.gateway.firmware
+        self.firmware = self.config['gateway']['firmware']
         self.device = device
         self.type = type
         self.state=DS_READY
