@@ -37,7 +37,7 @@ class BaseDevice:
         self.reload_map()
 
         self.lastError = "None"
-        self.firmware = self.config['gateway']['firmware']
+        self.firmware = self.config.gateway.firmware
         self.device = device
         self.type = type
         self.state=DS_READY
