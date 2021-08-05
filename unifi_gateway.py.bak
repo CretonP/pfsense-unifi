@@ -16,7 +16,7 @@ class UnifiGateway(Daemon):
 
     def __init__(self, **kwargs):
                
-        if('mode' in kwargs):
+        if(kwargs.has_key('mode')):
             if kwargs['mode']=='usg':
                 self.device = unifi.unifi_usg.UnifiUSG(kwargs['config'])
             elif kwargs['mode']=='usgp':
