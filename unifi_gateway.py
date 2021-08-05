@@ -38,7 +38,7 @@ class UnifiGateway(Daemon):
   
 
 def processargs(args):
-    initialize_logger('logs',args.loglevel)
+    ##initialize_logger('logs',args.loglevel)
     global console
     console = UnifiGateway(mode=args.mode, config=args.config)
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     #initialize_logger('logs')
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--loglevel', default='WARN', const='WARN', nargs='?', choices=['DEBUG', 'INFO', 'WARN','ERROR','FATAL'] )
+    ##parser.add_argument('--loglevel', default='WARN', const='WARN', nargs='?', choices=['DEBUG', 'INFO', 'WARN','ERROR','FATAL'] )
     parser.add_argument('--mode', type=str, help='key',default='usg' )
     parser.add_argument('--config', type=str, help='key',default=CONFIG_FILE )
     parser.set_defaults(func=processargs)
