@@ -21,8 +21,6 @@ class UnifiGateway(Daemon):
                 self.device = unifi.unifi_usg_pro.UnifiUSGPro(kwargs['config'])
             elif kwargs['mode']=='ap':
                 self.device = unifi.unifi_ap_lite.UnifiAPLite(kwargs['config'])
-            else: 
-                self.device = unifi.unifi_usg_pro.UnifiUSGPro(kwargs['config'])  
         else:
             self.device = unifi.unifi_usg_pro.UnifiUSGPro(kwargs['config']); 
         Daemon.__init__(self, pidfile=(unifi.pfsense_utils.pfsense_const['varrun_path']+"/"+ self.device.config["global"]["pid_file"]),stderr='logs/error.log',stdout='logs/all.log')   
@@ -38,7 +36,7 @@ class UnifiGateway(Daemon):
   
 
 def processargs(args):
-    ##initialize_logger('logs',args.loglevel)
+    ##git commit -initialize_logger('logs',args.loglevel)
     global console
     console = UnifiGateway(mode=args.mode, config=args.config)
 
