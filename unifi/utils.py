@@ -6,7 +6,7 @@ import psutil
 import ctypes
 import struct
 import os
-from pfsense_utils import get_single_sysctl
+from unifi.pfsense_utils import get_single_sysctl
 
 class TLV(object):
     def __init__(self):
