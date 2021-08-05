@@ -29,7 +29,7 @@ class PfsenseConfig(object):
                 self.interfaces.append({
                     child.tag:{
                         "if":child.find("if").text,
-                        "descr":child.find("descr").text,
+                        "descr":getattr(child.find('EmentaMateria'), 'text', None),
                         "enable":child.find("enable") is not None,
                         "ipaddr":child.find("ipaddr").text if child.find("ipaddr") is not None else "",
                         "subnet":child.find("subnet").text if child.find("subnet") is not None else ""
