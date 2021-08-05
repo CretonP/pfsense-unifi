@@ -71,7 +71,6 @@ if __name__ == '__main__':
     abspath = os.path.abspath(__file__)
     dname = os.path.dirname(abspath)
     os.chdir(dname)
-    initialize_logger('logs',args.loglevel)
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', type=str, help='key',default='usg' )
@@ -96,6 +95,8 @@ if __name__ == '__main__':
     parser_adopt.add_argument('-k', type=str, help='key', required=True)
     parser_adopt.set_defaults(func=set_adopt)
     args = parser.parse_args()
+    
+    initialize_logger('logs',args.loglevel)
 
     args.func(args)
 
