@@ -39,16 +39,16 @@ class PfsenseConfig(object):
     @config_checker
     def printData(self):
         for child in self.interfaces:
-            print child.keys()
+            print(list(child.keys()))
 
     @config_checker
     def getDefaultLan(self):
-        tmp = [iface for iface in self.interfaces if 'lan' in iface.keys()]
-        return tmp[0].values()[0] if len(tmp)>0 else None
+        tmp = [iface for iface in self.interfaces if 'lan' in list(iface.keys())]
+        return list(tmp[0].values())[0] if len(tmp)>0 else None
     @config_checker
     def getDefaultWan(self):
-        tmp = [iface for iface in self.interfaces if 'wan' in iface.keys()]
-        return tmp[0].values()[0] if len(tmp)>0 else None
+        tmp = [iface for iface in self.interfaces if 'wan' in list(iface.keys())]
+        return list(tmp[0].values())[0] if len(tmp)>0 else None
 
 
 
