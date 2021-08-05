@@ -4,7 +4,7 @@ import socket
 import binascii
 import struct
 import argparse
-import urlparse
+import urllib.parse
 STUN_PORT = 3478
 
 FAMILY_IPv4 = '\x01'
@@ -57,7 +57,7 @@ socket.setdefaulttimeout(10)
 
 def generate_transaction_id():
     tid = []
-    for i in xrange(32): # (16bytes)
+    for i in range(32): # (16bytes)
         tid.append(random.choice('0123456789ABCDEF'))
     return binascii.a2b_hex(''.join(tid))
 
@@ -182,7 +182,7 @@ class StunClient(object):
 
         self.sock.sendto(self.req, (host, port))
     def send_request(self, url):
-        o = urlparse.urlparse(url)
+        o = urllib.parse.urlparse(url)
         host = o.hostname
         port = o.port
         self.transaction_id = generate_transaction_id()
