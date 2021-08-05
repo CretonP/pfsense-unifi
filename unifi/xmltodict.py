@@ -8,10 +8,10 @@ except ImportError:
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 try:  # pragma no cover
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:  # pragma no cover
     try:
-        from StringIO import StringIO
+        from io import StringIO
     except ImportError:
         from io import StringIO
 
@@ -19,11 +19,11 @@ from collections import OrderedDict
 from inspect import isgenerator
 
 try:  # pragma no cover
-    _basestring = basestring
+    _basestring = str
 except NameError:  # pragma no cover
     _basestring = str
 try:  # pragma no cover
-    _unicode = unicode
+    _unicode = str
 except NameError:  # pragma no cover
     _unicode = str
 
@@ -91,7 +91,7 @@ class _DictSAXHandler(object):
     def _attrs_to_dict(self, attrs):
         if isinstance(attrs, dict):
             return attrs
-        return self.dict_constructor(zip(attrs[0::2], attrs[1::2]))
+        return self.dict_constructor(list(zip(attrs[0::2], attrs[1::2])))
 
     def startNamespaceDecl(self, prefix, uri):
         self.namespace_declarations[prefix or ''] = uri
@@ -107,7 +107,7 @@ class _DictSAXHandler(object):
             self.stack.append((self.item, self.data))
             if self.xml_attribs:
                 attr_entries = []
-                for key, value in attrs.items():
+                for key, value in list(attrs.items()):
                     key = self.attr_prefix+self._build_name(key)
                     if self.postprocessor:
                         entry = self.postprocessor(self.path, key, value)
@@ -432,7 +432,7 @@ def _emit(key, value, content_handler,
         cdata = None
         attrs = OrderedDict()
         children = []
-        for ik, iv in v.items():
+        for ik, iv in list(v.items()):
             if ik == cdata_key:
                 cdata = iv
                 continue
@@ -440,7 +440,7 @@ def _emit(key, value, content_handler,
                 ik = _process_namespace(ik, namespaces, namespace_separator,
                                         attr_prefix)
                 if ik == '@xmlns' and isinstance(iv, dict):
-                    for k, v in iv.items():
+                    for k, v in list(iv.items()):
                         attr = 'xmlns{}'.format(':{}'.format(k) if k else '')
                         attrs[attr] = _unicode(v)
                     continue
@@ -498,7 +498,7 @@ def unparse(input_dict, output=None, encoding='utf-8', full_document=True,
         content_handler = XMLGenerator(output, encoding)
     if full_document:
         content_handler.startDocument()
-    for key, value in input_dict.items():
+    for key, value in list(input_dict.items()):
         _emit(key, value, content_handler, full_document=full_document,
               **kwargs)
     if full_document:

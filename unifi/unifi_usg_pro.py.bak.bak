@@ -1,14 +1,14 @@
 # coding: utf-8
 from unifi.basedevice import BaseDevice
-from . import basecommand 
+import basecommand 
 import json
 import re
 import psutil
-from . import utils
-from . import pfsense_utils
-from . import ip_calculator
+import utils
+import pfsense_utils
+import ip_calculator
 import time
-import _thread
+import thread
 import logging
 
 class UnifiUSGPro(BaseDevice):
@@ -17,7 +17,7 @@ class UnifiUSGPro(BaseDevice):
         self.wan_addresses=[]
                 
     def cfgversion(self):
-        if 'mgmt_cfg' in self.config and 'cfgversion' in self.config['mgmt_cfg']:
+        if self.config.has_key('mgmt_cfg') and self.config['mgmt_cfg'].has_key('cfgversion'):
              return self.config['mgmt_cfg']['cfgversion']
         else:
             return "?"
@@ -55,23 +55,23 @@ class UnifiUSGPro(BaseDevice):
             ]
         }
     def getCurrentMessageType(self):
-        if ('gateway' in self.config 
+        if (self.config.has_key('gateway') 
             and not self.config['gateway']['is_adopted'] 
-            and ('key' not in self.config['gateway'] or self.config['gateway']['key']=="" )):
+            and (not self.config['gateway'].has_key('key') or self.config['gateway']['key']=="" )):
             return -1     
-        if ('gateway' in self.config 
+        if (self.config.has_key('gateway') 
             and not self.config['gateway']['is_adopted'] 
-            and 'key' in self.config['gateway'] 
+            and self.config['gateway'].has_key('key') 
             and not self.config['gateway']['key']=="") : #discover
             return 1     
-        if 'gateway' in self.config and self.config['gateway']['is_adopted'] : #info
+        if self.config.has_key('gateway') and self.config['gateway']['is_adopted'] : #info
             return 2     
     def getInformUrl(self):
         return self.config['gateway']['url']
     def getInformIp(self):
         return "127.0.0.1"                      
     def getHostname(self):
-        if 'host' in self.config['gateway'] :
+        if self.config['gateway'].has_key('host') :
             return self.config['gateway']['host']
         return "UBNT"      
     def getKey(self):
@@ -132,16 +132,16 @@ class UnifiUSGPro(BaseDevice):
         counter = io_counters[name]
         mac = utils.get_macaddr(if_addrs,name)
         ipv4 = utils.get_ipv4addr(if_addrs,name)
-        dpinger = dpingerStatuses[name] if 'name' in dpingerStatuses else None
+        dpinger = dpingerStatuses[name] if dpingerStatuses.has_key('name') else None
         isup = stat.isup
         
-        if "pfsense-ppp" in interface and interface["pfsense-ppp"] is not None:
+        if interface.has_key("pfsense-ppp") and interface["pfsense-ppp"] is not None:
             ipv4 = utils.get_ipv4addr(if_addrs,interface["pfsense-ppp"])
-            dpinger = dpingerStatuses[interface["pfsense-ppp"]] if interface["pfsense-ppp"] in dpingerStatuses else dpinger
-            isup = if_stats[interface["pfsense-ppp"]].isup if interface["pfsense-ppp"] in if_stats else False
+            dpinger = dpingerStatuses[interface["pfsense-ppp"]] if dpingerStatuses.has_key(interface["pfsense-ppp"]) else dpinger
+            isup = if_stats[interface["pfsense-ppp"]].isup if if_stats.has_key(interface["pfsense-ppp"]) else False
         
         ipaddress1 = ipv4.address if ipv4 is not None else "0.0.0.0"
-        ntopstat = hostsstatus[ipaddress1] if hostsstatus is not None and  ipaddress1 in hostsstatus else None
+        ntopstat = hostsstatus[ipaddress1] if hostsstatus is not None and  hostsstatus.has_key(ipaddress1) else None
 
         data = {
                 "drops": counter.dropout+counter.dropin,
@@ -166,7 +166,7 @@ class UnifiUSGPro(BaseDevice):
                 "tx_errors": counter.errout,
                 "tx_packets": counter.packets_sent,
                 "up": isup ,
-                "uptime": ntopstat['duration'] if ntopstat is not None and 'duration' in ntopstat else 0
+                "uptime": ntopstat['duration'] if ntopstat is not None and ntopstat.has_key('duration') else 0
                 
                 }
 
@@ -217,14 +217,14 @@ class UnifiUSGPro(BaseDevice):
         counter = io_counters[name]
         mac = utils.get_macaddr(if_addrs,name)
         ipv4 = utils.get_ipv4addr(if_addrs,name)
-        dpinger = dpingerStatuses[name] if 'name' in dpingerStatuses else None
+        dpinger = dpingerStatuses[name] if dpingerStatuses.has_key('name') else None
         isup = stat.isup
-        if "pfsense-ppp" in interface and interface["pfsense-ppp"] is not None:
+        if interface.has_key("pfsense-ppp") and interface["pfsense-ppp"] is not None:
             ipv4 = utils.get_ipv4addr(if_addrs,interface["pfsense-ppp"])
-            dpinger = dpingerStatuses[interface["pfsense-ppp"]] if interface["pfsense-ppp"] in dpingerStatuses else dpinger
-            isup = if_stats[interface["pfsense-ppp"]].isup if interface["pfsense-ppp"] in if_stats else False
+            dpinger = dpingerStatuses[interface["pfsense-ppp"]] if dpingerStatuses.has_key(interface["pfsense-ppp"]) else dpinger
+            isup = if_stats[interface["pfsense-ppp"]].isup if if_stats.has_key(interface["pfsense-ppp"]) else False
         ipaddress1 = ipv4.address if ipv4 is not None else "0.0.0.0"
-        ntopstat = hostsstatus[ipaddress1] if  hostsstatus is not None and  ipaddress1 in hostsstatus else None
+        ntopstat = hostsstatus[ipaddress1] if  hostsstatus is not None and  hostsstatus.has_key(ipaddress1) else None
 
         data = {
                 "autoneg": "True",
@@ -252,12 +252,12 @@ class UnifiUSGPro(BaseDevice):
                 "up": isup
                 }
    
-        if ('ntopng' in self.config
-            and 'enabled' in self.config['ntopng']
+        if (self.config.has_key('ntopng')
+            and self.config['ntopng'].has_key('enabled')
             and self.config['ntopng']['enabled']
-            and 'showhosts' in self.config['ntopng']
+            and self.config['ntopng'].has_key('showhosts')
             and self.config['ntopng']['showhosts']
-            and 'address' in interface 
+            and interface.has_key('address') 
             and 'dhcp' not in interface['address']):
             
             data["address"]= interface['address'][0]
@@ -267,12 +267,12 @@ class UnifiUSGPro(BaseDevice):
 
             netname = calc.net_name()
             if(hostsstatus is not None):
-                hosts = [host for key,host in list(hostsstatus.items()) if host['local_network_name'] == netname and not host['is_broadcast'] and not host['is_multicast']]
+                hosts = [host for key,host in hostsstatus.items() if host['local_network_name'] == netname and not host['is_broadcast'] and not host['is_multicast']]
                 data['host_table']=[]
                 for rhost in hosts:
                     data['host_table'].append(self.create_host_table_element(rhost))
                 
-        if (interface["wan"] or  ( 'address' in interface and 'dhcp' in interface['address'])) and ipv4 is not None:
+        if (interface["wan"] or  ( interface.has_key('address') and 'dhcp' in interface['address'])) and ipv4 is not None:
             data["address"]= ipv4.address+"/32"
             data["addresses"]= [ipv4.address+"/32"]
             data["gateways"]=[ dpinger['gateway'] if dpinger is not None else ""  ]
@@ -320,12 +320,12 @@ class UnifiUSGPro(BaseDevice):
         if_addrs = psutil.net_if_addrs()
         dpingerStatuses = pfsense_utils.getGatewaysPingerStatus()
         hostsstatus= {}
-        if ('ntopng' in self.config 
-            and 'enabled' in self.config['ntopng'] 
+        if (self.config.has_key('ntopng') 
+            and self.config['ntopng'].has_key('enabled') 
             and self.config['ntopng']['enabled']  
-            and 'user' in self.config['ntopng'] 
-            and 'password' in self.config['ntopng']
-            and 'url' in self.config['ntopng']
+            and self.config['ntopng'].has_key('user') 
+            and self.config['ntopng'].has_key('password')
+            and self.config['ntopng'].has_key('url')
             and self.config['ntopng']['url'] 
             and self.config['ntopng']['user'] 
             and self.config['ntopng']['password']):
@@ -352,7 +352,7 @@ class UnifiUSGPro(BaseDevice):
         else:
             local={
                     'unifi':key,
-                    'unifi-description':data['description'] if 'description' in data else "LAN",
+                    'unifi-description':data['description'] if data.has_key('description') else "LAN",
                     'pfsense':'',
                     'enabled':True,
                     'wan':False
@@ -360,17 +360,17 @@ class UnifiUSGPro(BaseDevice):
             self.mapConfig['ports'].append(local)    
 
         if(local is not None):
-            if('address' in data):
+            if(data.has_key('address')):
                 local['address']=data['address']
-            local['pppoe']='pppoe' in data
-            local['enabled']='disable' not in data 
+            local['pppoe']=data.has_key('pppoe')
+            local['enabled']=not data.has_key('disable') 
    
     def createInterfaces(self,data):
         if(data['interfaces'] is not None and data['interfaces']['ethernet'] is not None):
             for key in data['interfaces']['ethernet']:
                 current =  data['interfaces']['ethernet'][key]
                 self.process_or_create_if(key,current)
-                if('vif' in current):
+                if(current.has_key('vif')):
                     for vkey in current['vif']:
                         self.process_or_create_if("{}.{}".format(key,vkey),current['vif'][vkey])
         self.save_map()        
@@ -380,10 +380,10 @@ class UnifiUSGPro(BaseDevice):
           self.config['speed-test']=data
           self.save_config()
           self.reload_config()
-          _thread.start_new_thread( self.speedtest_check ,() )
+          thread.start_new_thread( self.speedtest_check ,() )
 
     def speedtest_check(self):
-        from .speedtest import Speedtest
+        from speedtest import Speedtest
         self.interval = 1000*100
         cmd = self.createBaseInform()
         cmd['sys_stats']=self.get_sys_stats()
@@ -460,7 +460,7 @@ class UnifiUSGPro(BaseDevice):
         logging.debug("Got message {}".format(result['_type']))
         logging.debug(result)
         if result['_type'] == 'setdefault':
-            if "mgmt_cfg" in self.config:
+            if self.config.has_key("mgmt_cfg"):
                 self.config.pop("mgmt_cfg",None)
             self.config['gateway']['is_adopted'] = False
             self.config['gateway']['key'] = ''
@@ -481,11 +481,11 @@ class UnifiUSGPro(BaseDevice):
             self.interval = 1000*int(result['interval'])
 
         if result['_type'] == 'setparam':
-            for key, value in list(result.items()):
+            for key, value in result.items():
                 if key not in ['_type', 'server_time_in_utc', 'mgmt_cfg','system_cfg']:
                     self.config['gateway'][key]= value
                 elif key in ['mgmt_cfg']:
-                    if key not in self.config:
+                    if not self.config.has_key(key):
                         self.config[key]={}
                     lines = re.split('\n',value) 
                     for line in lines:
@@ -495,7 +495,7 @@ class UnifiUSGPro(BaseDevice):
 
                 elif key in ['system_cfg']:
                     system_cfg = json.loads(value,object_hook= utils._byteify)
-                    if system_cfg["system"] is not None and "host-name" in system_cfg["system"]:
+                    if system_cfg["system"] is not None and system_cfg["system"].has_key("host-name"):
                         self.config['gateway']['host'] = system_cfg["system"]["host-name"]
                         self.save_config()
                         self.reload_config()

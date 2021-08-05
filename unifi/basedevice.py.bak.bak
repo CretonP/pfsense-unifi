@@ -10,15 +10,15 @@ import socket
 import binascii
 import time
 import psutil
-from . import cryptoutils
-import urllib.request, urllib.error, urllib.parse
+import cryptoutils
+import urllib2
 import json
-from . import basecommand
-from . import stun
+import basecommand
+import stun
 import psutil
 
-from . import pfsense_config
-from . import basecommand
+import pfsense_config
+import basecommand
 DS_UNKNOWN=1
 DS_ADOPTING=0
 DS_READY=2
@@ -46,7 +46,7 @@ class BaseDevice:
         self.nextCommand =None
         self.delayStart = int(round(time.time()  * 1000)) - self.interval
 
-        if('gateway' in self.config and 'lan_if' in self.config['gateway']):
+        if(self.config.has_key('gateway') and self.config['gateway'].has_key('lan_if')):
             lan_if = self.config['gateway']['lan_if']
             if_addrs = psutil.net_if_addrs()
             macaddr = get_macaddr(if_addrs,lan_if)
@@ -119,8 +119,8 @@ class BaseDevice:
 
         logging.debug('Send inform request to {} : {}'.format(url, data))
         try:
-            request = urllib.request.Request(url, cryptoutils.encode_inform(self.getKey(),data,usecbc,self.mac), headers)
-            response = urllib.request.urlopen(request)
+            request = urllib2.Request(url, cryptoutils.encode_inform(self.getKey(),data,usecbc,self.mac), headers)
+            response = urllib2.urlopen(request)
             result = cryptoutils.decode_inform(self.getKey(), response.read())
             return result
         except Exception as ex:
@@ -275,7 +275,7 @@ class BaseDevice:
     
     def _send_stun(self):
         try:
-            if 'mgmt_cfg' in self.config and 'stun_url' in self.config['mgmt_cfg']:
+            if self.config.has_key('mgmt_cfg') and self.config['mgmt_cfg'].has_key('stun_url'):
                 client = stun.StunClient()
                 client.send_request(self.config['mgmt_cfg']['stun_url'])
                 result = client.receive_response()

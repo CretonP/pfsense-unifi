@@ -2,7 +2,7 @@ __author__ = 'Kailash Joshi'
 import sys
 
 def _dec_to_binary(ip_address):
-    return map(lambda x: bin(x)[2:].zfill(8), ip_address)
+    return [bin(x)[2:].zfill(8) for x in ip_address]
 
 
 def _negation_mask(net_mask):
@@ -16,9 +16,9 @@ class IPCalculator(object):
     def __init__(self, ip_address, cdir=24):
         if '/' in ip_address:
             self._address_val, self._cidr = ip_address.split('/')
-            self._address = map(int, self._address_val.split('.'))
+            self._address = list(map(int, self._address_val.split('.')))
         else:
-            self._address = map(int, ip_address.split('.'))
+            self._address = list(map(int, ip_address.split('.')))
             self._cidr = cdir
         self.binary_IP = _dec_to_binary(self._address)
         self.binary_Mask = None
@@ -28,13 +28,13 @@ class IPCalculator(object):
         self.net_mask()
 
     def __repr__(self):
-        print "Calculating the IP range of %s/%s" % (".".join(map(str, self._address)), self._cidr)
-        print "=================================="
-        print "Netmask %s" % (".".join(map(str, self.net_mask())))
-        print "Network ID %s" % (".".join(map(str, self.network_ip())))
-        print "Subnet Broadcast address %s" % (".".join(map(str, self.broadcast_ip())))
-        print "Host range %s" % (self.host_range())
-        print "Max number of hosts %s" % (self.number_of_host())
+        print("Calculating the IP range of %s/%s" % (".".join(map(str, self._address)), self._cidr))
+        print("==================================")
+        print("Netmask %s" % (".".join(map(str, self.net_mask()))))
+        print("Network ID %s" % (".".join(map(str, self.network_ip()))))
+        print("Subnet Broadcast address %s" % (".".join(map(str, self.broadcast_ip()))))
+        print("Host range %s" % (self.host_range()))
+        print("Max number of hosts %s" % (self.number_of_host()))
     def net_name(self):
         return "%s/%s" % ((".".join(map(str, self.network_ip()))),self._cidr)
     def net_mask(self):
@@ -67,7 +67,7 @@ class IPCalculator(object):
         return "%s - %s" % (".".join(map(str, min_range)), ".".join(map(str, max_range)))
 
     def number_of_host(self):
-        return (2 ** sum(map(lambda x: sum(c == '1' for c in x), self.negation_Mask))) - 2
+        return (2 ** sum([sum(c == '1' for c in x) for x in self.negation_Mask])) - 2
 
 
 def ip_calculate(ip):

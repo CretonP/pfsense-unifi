@@ -39,7 +39,7 @@ class PfsenseConfig(object):
     @config_checker
     def printData(self):
         for child in self.interfaces:
-            print((list(child.keys())))
+            print(list(child.keys()))
 
     @config_checker
     def getDefaultLan(self):

@@ -6,8 +6,8 @@ import psutil
 import ctypes
 import struct
 import os
-from . import xmltodict
-import urllib.request, urllib.error, urllib.parse
+import xmltodict
+import urllib2
 global pfsense_const
 pfsense_const = {
     "event_address" : "unix:///var/run/check_reload_status",
@@ -70,7 +70,7 @@ def get_single_sysctl(name):
 
 def get_dpinger_status(gwname) :
     running_processes = running_dpinger_processes()
-    if gwname not in running_processes : 
+    if not running_processes.has_key(gwname) : 
         return None
 
     proc = running_processes[gwname]
@@ -619,8 +619,8 @@ def get_ntopng_stats(login, password,host):
             'Cookie': 'user={}; password={}'.format(login,password),
             'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
         }
-        request = urllib.request.Request(url, None, headers)
-        response = urllib.request.urlopen(request, context=ctx)
+        request = urllib2.Request(url, None, headers)
+        response = urllib2.urlopen(request, context=ctx)
         result = response.read()
         return result
     except Exception as ex:

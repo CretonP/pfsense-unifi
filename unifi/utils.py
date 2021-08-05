@@ -68,21 +68,21 @@ def ping(host,iface):
     return subprocess.call(args, shell=need_sh) == 0
 
 def get_ipv4addr(if_addrs,lan_if):
-    if if_addrs.has_key(lan_if):
+    if lan_if in if_addrs:
         addr = if_addrs[lan_if]
         tmp = [mac for mac in addr if mac.family == 2]
         if(len(tmp)>0):
             return tmp[0]
     return None
 def get_macaddr(if_addrs,lan_if):
-    if if_addrs.has_key(lan_if):
+    if lan_if in if_addrs:
         addr = if_addrs[lan_if]
         tmp = [mac for mac in addr if mac.family == -1 or mac.family==18]
         if(len(tmp)>0):
             return tmp[0]
     return None
 def get_apv6addr(if_addrs,lan_if):
-    if if_addrs.has_key(lan_if):
+    if lan_if in if_addrs:
         addr = if_addrs[lan_if]
         tmp = [mac for mac in addr if mac.family == 23]
         if(len(tmp)>0):
@@ -91,7 +91,7 @@ def get_apv6addr(if_addrs,lan_if):
 
 def _byteify(data, ignore_dicts = False):
     # if this is a unicode string, return its string representation
-    if isinstance(data, unicode):
+    if isinstance(data, str):
         return data.encode('utf-8')
     # if this is a list of values, return list of byteified values
     if isinstance(data, list):
@@ -101,7 +101,7 @@ def _byteify(data, ignore_dicts = False):
     if isinstance(data, dict) and not ignore_dicts:
         return {
             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
-            for key, value in data.iteritems()
+            for key, value in data.items()
         }
     # if it's anything else, return it in its original form
     return data
