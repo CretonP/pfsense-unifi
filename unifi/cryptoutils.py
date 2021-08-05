@@ -3,7 +3,7 @@
 from Crypto.Cipher import AES
 from Crypto import Random
 import zlib
-from utils import mac_string_2_array, ip_string_2_array
+from unifi.utils import mac_string_2_array, ip_string_2_array
 from binascii import a2b_hex
 from struct import pack, unpack
 # import time
