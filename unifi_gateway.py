@@ -38,6 +38,7 @@ class UnifiGateway(Daemon):
   
 
 def processargs(args):
+    initialize_logger('logs',args.loglevel)
     global console
     console = UnifiGateway(mode=args.mode, config=args.config)
 
